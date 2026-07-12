@@ -1,0 +1,72 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Note {
+  id            String   @id @default(uuid())
+  title         String
+  subject       String
+  semester      Int
+  branch        String // CSE, ECE, ME, CE, EE, IT, etc.
+  category      String // Notes, PYQ, Suggestions, Syllabus
+  fileUrl       String // Path or external link
+  fileType      String   @default("pdf")
+  viewCount     Int      @default(0)
+  downloadCount Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  thumbnail   String
+  playlistUrl String
+  duration    String   @default("Self-paced")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  videos      Video[]
+}
+
+model Video {
+  id        String   @id @default(uuid())
+  title     String
+  videoUrl  String
+  notesUrl  String?
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model BlogPost {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  category  String // Career, Exam Prep, Roadmap
+  tags      String // Comma separated
+  author    String   @default("Core Engineers Hub")
+  imageUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactSubmission {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  message   String
+  status    String   @default("UNREAD") // UNREAD, READ
+  createdAt DateTime @default(now())
+}
